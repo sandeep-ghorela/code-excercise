@@ -1,0 +1,79 @@
+import java.util.*;
+
+public class Main_2_final
+{
+	public static void main(String a[]) {
+		String[] occuringWordsArray = getOccurringWords();
+		System.out.println(Arrays.toString(occuringWordsArray));
+	}
+
+	public static String[] getOccurringWords() {
+
+		List<String> occuringWordsList = new ArrayList<>(3);
+		//String s = "In a village of La Mancha, the name of which I have no desire to call to mind, there lived not long since one of those gentlemen that keep a lance in the lance-rack, an old buckler, a lean hack, and a greyhound for coursing. An olla of rather more beef than mutton, a salad on most nights, scraps on Saturdays, lentils on Fridays, and a pigeon or so extra on Sundays, made away with three-quarters of his income.";
+		//String s = "e e e e DDD ddd DdD: ddd ddd aa aA Aa, bb cc cC e e e";
+		String s = "  //wont won't won't";
+		//String s =" ";
+		//String s =" test test bbb bbb bbb bbb ccc ccc ccc";
+		//String s = "  //wont won't won't aa cc"; //TODO: check this
+		//String s = "f b c d e";
+		//String s = "aa aa bb bb";
+		//String s = "  //wont won't won't cc cc";
+		StringTokenizer st = new StringTokenizer(s);
+		Map<String, Integer> duplicates = new TreeMap<>();
+		// boolean allUniuqFound = true;
+		while (st.hasMoreElements())
+		{
+			String str =  (String)st.nextElement();
+
+			if (duplicates.containsKey(str))
+			{
+				duplicates.put(str.trim().toLowerCase(), duplicates.get(str) + 1);
+				//allUniuqFound = false;
+			}
+			else
+			{
+				duplicates.put(str.trim().toLowerCase(), 1);
+
+			}
+		}
+        /*if(allUniuqFound) {
+
+            return new String[]{"No duplicate values found"};
+        }*/
+		System.out.println("size =="+duplicates.size());
+		// If more than three unique words found
+		//if(duplicates.values().size() > 3) {
+
+		for(int i = 0; i<=2 ; i++)
+		{
+
+			if(! duplicates.isEmpty()) {
+				Integer d = Collections.max(duplicates.values());
+				Map.Entry<String, Integer> entryKey = duplicates.entrySet().stream().filter(entry -> d.equals(entry.getValue())).findFirst().get();
+				System.out.println("String \""+entryKey.getKey() +"\" found for " +entryKey.getValue()+ " times");
+				occuringWordsList.add(entryKey.getKey());
+				//If a text contains fewer than three unique words, then  top-1
+				//Or no duplicate values found then it will return only 1st value(sorted value)
+				if(duplicates.size() < 3) {
+					break;
+				}
+				duplicates.remove(entryKey.getKey());}
+		}
+		// }
+		//fewer than three unique words
+        /*else {
+            for (Map.Entry<String, Integer> entry : duplicates.entrySet()) {
+
+                System.out.println("String \""+entry.getKey() +"\" found for " +entry.getValue()+ " times");
+                break;
+
+            }
+        }*/
+
+		return Arrays.copyOf(occuringWordsList.toArray(), occuringWordsList.size(),
+				String[].class);
+	}
+
+
+}
