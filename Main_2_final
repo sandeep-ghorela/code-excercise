@@ -1,79 +1,108 @@
 import java.util.*;
 
-public class Main_2_final
+
+public class Exercise
 {
-	public static void main(String a[]) {
-		String[] occuringWordsArray = getOccurringWords();
+	public static void main(String a[])
+	{
+
+		final String[] occuringWordsArray = getOccurringWords(getString());
+
 		System.out.println(Arrays.toString(occuringWordsArray));
 	}
 
-	public static String[] getOccurringWords() {
+	private static String getString()
+	{
+		//in case user input is required
+		String str = null;
+		/*Scanner myObj = new Scanner(System.in);
+		System.out.println("Enter string ");
+		str = myObj.nextLine();*/
 
-		List<String> occuringWordsList = new ArrayList<>(3);
-		//String s = "In a village of La Mancha, the name of which I have no desire to call to mind, there lived not long since one of those gentlemen that keep a lance in the lance-rack, an old buckler, a lean hack, and a greyhound for coursing. An olla of rather more beef than mutton, a salad on most nights, scraps on Saturdays, lentils on Fridays, and a pigeon or so extra on Sundays, made away with three-quarters of his income.";
-		//String s = "e e e e DDD ddd DdD: ddd ddd aa aA Aa, bb cc cC e e e";
-		String s = "  //wont won't won't";
-		//String s =" ";
-		//String s =" test test bbb bbb bbb bbb ccc ccc ccc";
-		//String s = "  //wont won't won't aa cc"; //TODO: check this
-		//String s = "f b c d e";
-		//String s = "aa aa bb bb";
-		//String s = "  //wont won't won't cc cc";
-		StringTokenizer st = new StringTokenizer(s);
-		Map<String, Integer> duplicates = new TreeMap<>();
-		// boolean allUniuqFound = true;
-		while (st.hasMoreElements())
+		//In case user input required, please comment following strings
+		//str = "In a village of La Mancha, the name of which I have no desire to call to mind, there lived not long since one of those gentlemen that keep a lance in the lance-rack, an old buckler, a lean hack, and a greyhound for coursing. An olla of rather more beef than mutton, a salad on most nights, scraps on Saturdays, lentils on Fridays, and a pigeon or so extra on Sundays, made away with three-quarters of his income.";
+		//str = "e e e e DDD ddd DdD: ddd ddd aa aA Aa, bb cc cC e e e";
+		 str = "  //wont won't won't";
+		//str = " ";
+
+		return str;
+	}
+
+	public static String[] getOccurringWords(final String st)
+	{
+
+
+		final List<String> occuringWordsList = new ArrayList<>(3);
+		final Map<String, Integer> duplicates = new TreeMap<>();
+
+		final StringTokenizer token = new StringTokenizer(st," //");
+
+		while (token.hasMoreElements())
 		{
-			String str =  (String)st.nextElement();
+			String str = ((String) token.nextElement()).trim().toLowerCase();
 
 			if (duplicates.containsKey(str))
 			{
-				duplicates.put(str.trim().toLowerCase(), duplicates.get(str) + 1);
-				//allUniuqFound = false;
+				duplicates.put(str, duplicates.get(str) + 1);
+
 			}
 			else
 			{
-				duplicates.put(str.trim().toLowerCase(), 1);
+				duplicates.put(str, 1);
 
 			}
 		}
-        /*if(allUniuqFound) {
 
-            return new String[]{"No duplicate values found"};
-        }*/
-		System.out.println("size =="+duplicates.size());
-		// If more than three unique words found
-		//if(duplicates.values().size() > 3) {
-
-		for(int i = 0; i<=2 ; i++)
+		if (!duplicates.isEmpty())
 		{
-
-			if(! duplicates.isEmpty()) {
-				Integer d = Collections.max(duplicates.values());
-				Map.Entry<String, Integer> entryKey = duplicates.entrySet().stream().filter(entry -> d.equals(entry.getValue())).findFirst().get();
-				System.out.println("String \""+entryKey.getKey() +"\" found for " +entryKey.getValue()+ " times");
-				occuringWordsList.add(entryKey.getKey());
-				//If a text contains fewer than three unique words, then  top-1
-				//Or no duplicate values found then it will return only 1st value(sorted value)
-				if(duplicates.size() < 3) {
-					break;
-				}
-				duplicates.remove(entryKey.getKey());}
+			if (duplicates.size() >= 3)
+			{
+				handleIfDuplicatesMoreThanThree(duplicates, occuringWordsList);
+			}
+			else
+			{
+				handleIfUniqueLessThanThree(duplicates, occuringWordsList);
+			}
 		}
-		// }
-		//fewer than three unique words
-        /*else {
-            for (Map.Entry<String, Integer> entry : duplicates.entrySet()) {
 
-                System.out.println("String \""+entry.getKey() +"\" found for " +entry.getValue()+ " times");
-                break;
 
-            }
-        }*/
-
-		return Arrays.copyOf(occuringWordsList.toArray(), occuringWordsList.size(),
-				String[].class);
+		return Arrays.copyOf(occuringWordsList.toArray(), occuringWordsList.size(), String[].class);
 	}
 
+	private static void handleIfDuplicatesMoreThanThree(final Map<String, Integer> duplicates,
+			final List<String> occuringWordsList)
+	{
+		for (int i = 0; i <= 2; i++)
+		{
+			Integer d = Collections.max(duplicates.values());
+			Map.Entry<String, Integer> entryKey = getMatchingEntry(duplicates);
+			//If more than 3 or 3 duplicates found then ignore the unique(words which got 1 occurance)
+			if (d == 1)
+			{
+				break;
+			}
+			occuringWordsList.add(entryKey.getKey());
+			duplicates.remove(entryKey.getKey());
+		}
+	}
 
+	private static void handleIfUniqueLessThanThree(final Map<String, Integer> duplicates, final List<String> occuringWordsList)
+	{
+		for (int i = 0; i <= duplicates.size(); i++)
+		{
+			Integer d = Collections.max(duplicates.values());
+			Map.Entry<String, Integer> entryKey = getMatchingEntry(duplicates);
+			occuringWordsList.add(entryKey.getKey());
+			duplicates.remove(entryKey.getKey());
+
+		}
+	}
+
+	private static Map.Entry<String, Integer> getMatchingEntry(final Map<String, Integer> duplicates)
+	{
+		Integer d = Collections.max(duplicates.values());
+		Map.Entry<String, Integer> matchingEntries = duplicates.entrySet().stream().filter(entry -> d.equals(entry.getValue()))
+				.findFirst().get();
+		return matchingEntries;
+	}
 }
